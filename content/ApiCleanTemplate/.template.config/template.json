@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "LAQ27504",
+  "classifications": ["CleanArchitecture", "WebAPI"],
+  "identity": "apiclean.Template",
+  "name": "API Clean Architecture Template",
+  "shortName": "apiclean",
+  "tags": {
+    "language": "C#",
+    "type": "solution"
+  },
+  "exclude": ["**/bin/**", "**/obj/**", ".vs/**", ".git/**"],
+  "symbols": {
+    "db": {
+      "type": "parameter",
+      "datatype": "choice",
+      "description": "The database to use",
+      "choices": [
+        {
+          "choice": "SQLite",
+          "description": "Use SQLite as database"
+        },
+        {
+          "choice": "SQLServer",
+          "description": "Use SQL Server as database"
+        },
+        {
+          "choice": "PostgreSQL",
+          "description": "Use PostgreSQL as database"
+        }
+      ],
+      "replaces": "SQLite",
+      "defaultValue": "SQLite"
+    },
+    "isAuthen": {
+      "type": "parameter",
+      "datatype": "bool",
+      "description": "Include authentication and User entity",
+      "defaultValue": "false"
+    }
+  },
+  "sources": [
+    {
+      "modifiers": [
+        {
+          "condition": "(!isAuthen)",
+          "exclude": [
+            "**/AuthController.cs",
+            "**/User.cs",
+            "**/Auth/**",
+            "**/*user*.*",
+            "**/*User*.*",
+            "**/apiclean.Presentation.csproj:Microsoft.AspNetCore.Authentication.JwtBearer"
+          ]
+        },
+        {
+          "condition": "(db == \"SQLite\")",
+          "exclude": [
+            "**/appsettings.SQLServer.json",
+            "**/appsettings.Postgres.json",
+            "**/appsettings.Development.SQLServer.json",
+            "**/appsettings.Development.Postgres.json"
+          ],
+          "rename": {
+            "appsettings.SQLite.json": "appsettings.json",
+            "appsettings.Development.SQLite.json": "appsettings.Development.json"
+          }
+        },
+        {
+          "condition": "(db == \"SQLServer\")",
+          "exclude": [
+            "**/appsettings.SQLite.json",
+            "**/appsettings.Postgres.json",
+            "**/appsettings.Development.SQLite.json",
+            "**/appsettings.Development.Postgres.json"
+          ],
+          "rename": {
+            "appsettings.SQLServer.json": "appsettings.json",
+            "appsettings.Development.SQLServer.json": "appsettings.Development.json"
+          }
+        },
+        {
+          "condition": "(db == \"PostgreSQL\")",
+          "exclude": [
+            "**/appsettings.SQLite.json",
+            "**/appsettings.SQLServer.json",
+            "**/appsettings.Development.SQLServer.json",
+            "**/appsettings.Development.SQLite.json"
+          ],
+          "rename": {
+            "appsettings.Postgres.json": "appsettings.json",
+            "appsettings.Development.Postgres.json": "appsettings.Development.json"
+          }
+        }
+      ]
+    }
+  ],
+  "sourceName": "apiclean"
+}

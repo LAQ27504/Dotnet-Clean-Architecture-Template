@@ -1,0 +1,6 @@
+@apiclean.Presentation_HostAddress = http://localhost:5204
+
+GET {{apiclean.Presentation_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
