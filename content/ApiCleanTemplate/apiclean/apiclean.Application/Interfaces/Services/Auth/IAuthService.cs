@@ -9,5 +9,7 @@ namespace apiclean.Application.Interfaces.Services.Authentication
         Task<OperationResult<TokenResponse>> Login(LoginRequest request);
 
         Task<OperationResult<string>> Registration(RegistrationRequest request);
+
+        Task<OperationResult<TokenResponse>> RefreshingToken(TokenRequest request);
     }
 }

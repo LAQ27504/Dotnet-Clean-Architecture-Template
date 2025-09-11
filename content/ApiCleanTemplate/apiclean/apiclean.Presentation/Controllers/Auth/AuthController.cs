@@ -37,5 +37,16 @@ namespace apiclean.Presentation.Controllers.Auth
             var result = await _authService.Registration(request);
             return ToActionResult(result);
         }
+
+        [HttpPost("refresh-token")]
+        [ProducesResponseType(typeof(TokenResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(FailResponse), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(FailResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(FailResponse), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> RefreshToken([FromBody] TokenRequest request)
+        {
+            var result = await _authService.RefreshingToken(request);
+            return ToActionResult(result);
+        }
     }
 }

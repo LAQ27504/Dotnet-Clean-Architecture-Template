@@ -55,6 +55,12 @@ namespace apiclean.Application.Services
                 return OperationResult<string>.Conflict("Username is already taken");
             }
 
+            var existingEmail = await _userRepository.GetByEmailAsync(request.Email);
+            if (existingEmail != null)
+            {
+                return OperationResult<string>.Conflict("Email is already registered");
+            }
+
             if (request.Password != request.ConfirmPassword)
             {
                 return OperationResult<string>.BadRequest("Passwords do not match");
@@ -74,7 +80,43 @@ namespace apiclean.Application.Services
             return OperationResult<string>.Created("User registered successfully");
         }
 
-        public async Task<TokenResponse> GenerateTokensForUser(User user)
+        public async Task<OperationResult<TokenResponse>> RefreshingToken(TokenRequest request)
+        {
+            var principal = _tokenService.GetPrincipalFromExpiredToken(request.AccessToken);
+            if (principal == null)
+            {
+                return OperationResult<TokenResponse>.Unauthorized("Invalid access token");
+            }
+
+            var username = principal.Identity?.Name;
+            if (string.IsNullOrEmpty(username))
+            {
+                return OperationResult<TokenResponse>.Unauthorized("Invalid access token");
+            }
+
+            var id = principal.FindFirst("id")?.Value;
+
+            if (id == null || !Guid.TryParse(id, out _))
+            {
+                return OperationResult<TokenResponse>.BadRequest("Invalid access token.");
+            }
+
+            var user = await _userRepository.GetEntityByIdAsync(Guid.Parse(id));
+            if (
+                user == null
+                || user.RefreshToken != request.RefreshToken
+                || user.RefreshTokenExpiryTime <= DateTime.UtcNow
+            )
+            {
+                return OperationResult<TokenResponse>.Unauthorized("Invalid refresh token");
+            }
+
+            var tokenResponse = await GenerateTokensForUser(user);
+
+            return OperationResult<TokenResponse>.Ok(tokenResponse);
+        }
+
+        private async Task<TokenResponse> GenerateTokensForUser(User user)
         {
             var claims = new List<Claim>
             {

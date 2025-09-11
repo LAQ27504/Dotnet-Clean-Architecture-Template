@@ -14,5 +14,10 @@ namespace apiclean.Infrastructure.Repositories
         {
             return await _dbSet.FirstOrDefaultAsync(u => u.Username == username);
         }
+
+        public async Task<User?> GetByEmailAsync(string email)
+        {
+            return await _dbSet.FirstOrDefaultAsync(u => u.Email == email);
+        }
     }
 }

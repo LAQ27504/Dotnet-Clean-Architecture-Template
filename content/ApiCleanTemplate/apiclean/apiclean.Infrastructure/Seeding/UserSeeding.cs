@@ -15,7 +15,8 @@ namespace apiclean.Infrastructure.Seeding
                     Id = Guid.Parse("d290f1ee-6c54-4b01-90e6-d701748f0851"),
                     Username = "admin",
                     Email = "admin@gmail.com",
-                    HashedPassword = SecurityHelper.HashPassword("Admin@123"),
+                    HashedPassword =
+                        "aWb1imnfnUXAdNA5pYu+VUz2DVPdlgYD0IOgjMDr1yDHBVz2z6h/encDgnXBlonT",
                 },
             };
         }
