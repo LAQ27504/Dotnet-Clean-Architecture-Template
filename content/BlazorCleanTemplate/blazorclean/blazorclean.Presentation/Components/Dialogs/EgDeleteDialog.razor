@@ -1,0 +1,33 @@
+@using blazorclean.Presentation.Components.Dialogs
+
+<EgDialog Title="Delete Entity" Opened="IsOpen" CloseButtonClicked="Close">
+    <BodyContent>
+        <p>Are you sure you want to delete <strong>@EntityName</strong>?</p>
+    </BodyContent>
+
+    <FooterContent>
+        <div class="dialog-actions">
+            <button type="button" class="btn btn-secondary" @onclick="Close">Cancel</button>
+            <button type="button" class="btn btn-danger" @onclick="ConfirmDelete">Delete</button>
+        </div>
+    </FooterContent>
+</EgDialog>
+
+@code {
+    [Parameter] public bool IsOpen { get; set; }
+
+    [Parameter] public string EntityName { get; set; } = string.Empty;
+
+    [Parameter] public Guid EntityId { get; set; }
+
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    [Parameter] public EventCallback<Guid> OnDelete { get; set; }
+
+    private async Task Close() => await OnClose.InvokeAsync();
+
+    private async Task ConfirmDelete()
+    {
+        await OnDelete.InvokeAsync(EntityId);
+    }
+}

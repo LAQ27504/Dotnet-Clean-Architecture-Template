@@ -1,0 +1,40 @@
+@using System.ComponentModel.DataAnnotations
+@using blazorclean.Application.DTOs.Requests
+@using Microsoft.AspNetCore.Components.Forms
+@using blazorclean.Presentation.Components.Dialogs
+
+<EgDialog Title="Create Entity" Opened="IsOpen" CloseButtonClicked="Close">
+    <BodyContent>
+        <EditForm Model="Request" OnValidSubmit="Save">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group">
+                <label>Name:</label>
+                <InputText @bind-Value="Request.Name" class="form-control" />
+                <ValidationMessage For="@(() => Request.Name)" />
+            </div>
+        </EditForm>
+    </BodyContent>
+
+    <FooterContent>
+        <div class="dialog-actions">
+            <button type="button" class="btn btn-secondary" @onclick="Close">Cancel</button>
+            <button type="submit" formnovalidate class="btn btn-primary" @onclick="Save">Save</button>
+        </div>
+    </FooterContent>
+</EgDialog>
+
+@code {
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter] public EgRequest Request { get; set; } = new() { Name = string.Empty };
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback<EgRequest> OnSave { get; set; }
+
+    private async Task Close() => await OnClose.InvokeAsync();
+
+    private async Task Save()
+    {
+        await OnSave.InvokeAsync(Request);
+    }
+}

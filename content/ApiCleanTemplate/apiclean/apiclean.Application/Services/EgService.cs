@@ -63,13 +63,13 @@ namespace apiclean.Application.Services
 
             var response = new EgResponse
             {
-                message =
+                Message =
                     $"Hello {entity.Name}. This is the getting demo for project and this should show this line to represent the getting details of this object",
             };
             return OperationResult<EgResponse>.Ok(response);
         }
 
-        public async Task<OperationResult<PaginationResponse<EgResponse>>> GetPagination(
+        public async Task<OperationResult<PaginationResponse<EgDetailsResponse>>> GetPagination(
             EgPaginationRequest request
         )
         {
@@ -89,13 +89,15 @@ namespace apiclean.Application.Services
 
             // You can add the transfer with the dto mapper here
             var egEntities = entities
-                .Select(entity => new EgResponse
+                .Select(entity => new EgDetailsResponse
                 {
-                    message = $"{entity.Id}: The name is {entity.Name}",
+                    Id = entity.Id,
+                    Name = entity.Name,
+                    Message = $"{entity.Id}: The name is {entity.Name}",
                 })
                 .ToList();
 
-            var response = new PaginationResponse<EgResponse>
+            var response = new PaginationResponse<EgDetailsResponse>
             {
                 TotalItem = total,
                 PageIndex = request.PageIndex,
@@ -108,7 +110,7 @@ namespace apiclean.Application.Services
                 response.PageIndex = response.TotalPages;
             }
 
-            return OperationResult<PaginationResponse<EgResponse>>.Ok(response);
+            return OperationResult<PaginationResponse<EgDetailsResponse>>.Ok(response);
         }
 
         public async Task<OperationResult<string>> Update(Guid Id, EgUpdateRequest request)

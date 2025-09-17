@@ -1,0 +1,41 @@
+@using blazorclean.Application.DTOs.Requests
+@using blazorclean.Application.Interfaces.Services
+@using blazorclean.Presentation.Components.Dialogs
+
+@inject IEgService _egService
+@rendermode InteractiveServer
+
+<button class="btn btn-danger" @onclick="OpenDialog">
+    Delete
+</button>
+
+<EgDeleteDialog IsOpen="@isDialogOpen" EntityName="Name" EntityId="EntityId" OnDelete="HandleDelete"
+    OnClose="HandleClose" />
+
+@code {
+    private bool isDialogOpen = false;
+    [Parameter] public required string Name { get; set; }
+    [Parameter] public required Guid EntityId { get; set; }
+
+    private void OpenDialog()
+    {
+        isDialogOpen = true;
+    }
+
+    private Task HandleClose()
+    {
+        isDialogOpen = false;
+        return Task.CompletedTask;
+    }
+
+    private async Task HandleDelete(Guid EntityId)
+    {
+        await _egService.Delete(EntityId);
+        isDialogOpen = false;
+
+        // optional: raise an event so parent page can refresh list
+        await OnDeleted.InvokeAsync();
+    }
+
+    [Parameter] public EventCallback OnDeleted { get; set; }
+}

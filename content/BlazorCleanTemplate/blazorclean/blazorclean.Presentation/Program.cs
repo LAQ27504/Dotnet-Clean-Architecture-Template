@@ -19,9 +19,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// --- 2. Add Authentication & Authorization Services ---
-builder.Services.AddCascadingAuthenticationState();
-
 // Database configuration
 //#if (db == "SQLite")
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -41,6 +38,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // set up authen
 //#if (isAuthen)
+// --- 2. Add Authentication & Authorization Services ---
+builder.Services.AddCascadingAuthenticationState();
+
 builder.Services.AddAntiforgery();
 
 builder

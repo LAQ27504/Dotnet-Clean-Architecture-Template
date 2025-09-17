@@ -10,6 +10,6 @@ namespace apiclean.Application.Interfaces.Services
         : ICreateService<EgRequest>,
             IDeleteService,
             IGetByIdService<EgResponse>,
-            IGetPaginationService<EgPaginationRequest, PaginationResponse<EgResponse>>,
+            IGetPaginationService<EgPaginationRequest, PaginationResponse<EgDetailsResponse>>,
             IUpdateService<EgUpdateRequest> { }
 }

@@ -1,0 +1,45 @@
+@using System.ComponentModel.DataAnnotations
+@using blazorclean.Application.DTOs.Requests
+@using Microsoft.AspNetCore.Components.Forms
+@using blazorclean.Presentation.Components.Dialogs
+
+<EgDialog Title="Update Entity" Opened="IsOpen" CloseButtonClicked="Close">
+    <BodyContent>
+        <EditForm Model="Request" OnValidSubmit="Save">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group">
+                <label>Name:</label>
+                <InputText @bind-Value="Request.Name" class="form-control" />
+                <ValidationMessage For="@(() => Request.Name)" />
+            </div>
+        </EditForm>
+    </BodyContent>
+
+    <FooterContent>
+        <div class="dialog-actions">
+            <button type="button" class="btn btn-secondary" @onclick="Close">Cancel</button>
+            <button type="submit" formnovalidate class="btn btn-primary" @onclick="Save">Update</button>
+        </div>
+    </FooterContent>
+</EgDialog>
+
+@code {
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter]
+    public EgUpdateRequest Request { get; set; } = new EgUpdateRequest()
+    {
+        Name = string.Empty
+    }; // pre-filled when opening
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback<EgUpdateRequest> OnSave { get; set; }
+
+    private async Task Close() => await OnClose.InvokeAsync();
+
+    private async Task Save()
+    {
+        // Send back the edited Request to the parent
+        await OnSave.InvokeAsync(Request);
+    }
+}

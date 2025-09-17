@@ -1,0 +1,39 @@
+@using blazorclean.Application.DTOs.Requests
+@using blazorclean.Application.Interfaces.Services
+@using blazorclean.Presentation.Components.Dialogs
+@inject IEgService _egService
+@rendermode InteractiveServer
+
+<button class="btn btn-success" @onclick="OpenDialog">
+    Create
+</button>
+
+<EgCreateDialog IsOpen="isDialogOpen" Request="newEg" OnSave="HandleSave" OnClose="HandleClose" />
+
+@code {
+    private bool isDialogOpen = false;
+    private EgRequest newEg = new() { Name = "" };
+
+    private void OpenDialog()
+    {
+        newEg = new EgRequest() { Name = string.Empty };
+        isDialogOpen = true;
+    }
+
+    private Task HandleClose()
+    {
+        isDialogOpen = false;
+        return Task.CompletedTask;
+    }
+
+    private async Task HandleSave(EgRequest request)
+    {
+        await _egService.Create(request);
+        isDialogOpen = false;
+
+        // optional: raise an event so parent page can refresh list
+        await OnCreated.InvokeAsync();
+    }
+
+    [Parameter] public EventCallback OnCreated { get; set; }
+}

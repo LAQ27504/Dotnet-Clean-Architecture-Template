@@ -1,0 +1,52 @@
+@using blazorclean.Application.DTOs.Requests
+@using blazorclean.Application.Interfaces.Services
+@using blazorclean.Presentation.Components.Dialogs
+@inject IEgService _egService
+@rendermode InteractiveServer
+
+<button class="btn btn-warning" @onclick="OpenDialog">
+    Edit
+</button>
+
+<EgUpdateDialog IsOpen="isDialogOpen" Request="editEg" OnSave="HandleUpdate" OnClose="HandleClose" />
+
+@code {
+    private bool isDialogOpen = false;
+    private EgUpdateRequest editEg = new() { Name = string.Empty };
+    [Parameter] public required Guid EntityId { get; set; }
+    [Parameter] public required EgUpdateRequest EntityToEdit { get; set; }
+
+    private void OpenDialog()
+    {
+        Console.WriteLine($"{EntityToEdit.Name}");
+
+        // If you don’t want to mutate the original immediately,
+        // clone the entity into a new request object:
+        if (EntityToEdit != null)
+        {
+            editEg = new EgUpdateRequest
+            {
+                Name = EntityToEdit.Name
+            };
+        }
+
+        isDialogOpen = true;
+    }
+
+    private Task HandleClose()
+    {
+        isDialogOpen = false;
+        return Task.CompletedTask;
+    }
+
+    private async Task HandleUpdate(EgUpdateRequest request)
+    {
+        await _egService.Update(EntityId, request); // call Update API
+        isDialogOpen = false;
+
+        // optional: raise event so parent can refresh list
+        await OnUpdated.InvokeAsync();
+    }
+
+    [Parameter] public EventCallback OnUpdated { get; set; }
+}
