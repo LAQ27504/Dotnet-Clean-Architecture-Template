@@ -1,0 +1,30 @@
+@using test2.Application.DTOs.Requests
+
+<EgDialog Title="Create Entity" Opened="IsOpen" CloseButtonClicked="Cancel">
+    <BodyContent>
+        <MudForm>
+            <MudTextField @bind-Value="Request.Name" Label="Name" />
+        </MudForm>
+    </BodyContent>
+    <ActionContent>
+        <MudButton Color="Color.Secondary" OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Save">Save</MudButton>
+    </ActionContent>
+</EgDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = default!;
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter] public EgRequest Request { get; set; } = new() { Name = string.Empty };
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback<EgRequest> OnSave { get; set; }
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private async Task Save()
+    {
+        await OnSave.InvokeAsync(Request);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+}

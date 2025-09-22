@@ -49,6 +49,23 @@
             }
         </tbody>
     </table>
+    <div class="d-flex align-items-center justify-content-between mt-3">
+        <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-secondary" @onclick="PrevPage" disabled="@(response.PageIndex == 1)">Previous</button>
+            <span>Page @response.PageIndex of @response.TotalPages</span>
+            <button class="btn btn-secondary" @onclick="NextPage"
+                disabled="@(response.PageIndex == response.TotalPages)">Next</button>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <label for="pageSize">Page Size:</label>
+            <select id="pageSize" class="form-select w-auto" @onchange="PageSizeChanged" value="@request.PageSize">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+            </select>
+        </div>
+    </div>
 }
 else
 {
@@ -56,23 +73,6 @@ else
 }
 
 
-<div class="d-flex align-items-center justify-content-between mt-3">
-    <div class="d-flex align-items-center gap-2">
-        <button class="btn btn-secondary" @onclick="PrevPage" disabled="@(response.PageIndex == 1)">Previous</button>
-        <span>Page @response.PageIndex of @response.TotalPages</span>
-        <button class="btn btn-secondary" @onclick="NextPage"
-            disabled="@(response.PageIndex == response.TotalPages)">Next</button>
-    </div>
-
-    <div class="d-flex align-items-center gap-2">
-        <label for="pageSize">Page Size:</label>
-        <select id="pageSize" class="form-select w-auto" @onchange="PageSizeChanged" value="@request.PageSize">
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="20">20</option>
-        </select>
-    </div>
-</div>
 
 @code {
     private List<EgDetailsResponse> egs = new();

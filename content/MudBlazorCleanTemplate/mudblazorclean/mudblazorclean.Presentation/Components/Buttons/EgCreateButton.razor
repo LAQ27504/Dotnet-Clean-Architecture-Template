@@ -1,0 +1,54 @@
+@using test2.Application.DTOs.Requests
+@using test2.Application.Interfaces.Services
+@using test2.Presentation.Components.Dialogs
+
+@inject IEgService _egService
+@inject IDialogService DialogService
+
+<MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="OpenDialog" />
+
+@code {
+    private bool isDialogOpen = false;
+    private EgRequest newEg = new() { Name = "" };
+
+    private DialogOptions options = new DialogOptions
+    {
+        MaxWidth = MaxWidth.Medium,
+        FullWidth = true
+    };
+
+    private async Task OpenDialog()
+    {
+        newEg = new EgRequest() { Name = string.Empty };
+        isDialogOpen = true;
+
+        var parameters = new DialogParameters<EgCreateDialog>
+{
+{ x => x.IsOpen, isDialogOpen },
+{ x => x.Request, newEg },
+{ x => x.OnSave, EventCallback.Factory.Create<EgRequest>(this, HandleSave) },
+{ x => x.OnClose, EventCallback.Factory.Create(this, HandleClose) }
+};
+
+        // You would typically show the dialog here, e.g.:
+        // DialogService.Show<EgCreateDialog>("Create Eg", parameters);
+        var dialog = await DialogService.ShowAsync<EgCreateDialog>("Create Eg", parameters, options);
+    }
+
+    private Task HandleClose()
+    {
+        isDialogOpen = false;
+        return Task.CompletedTask;
+    }
+
+    private async Task HandleSave(EgRequest request)
+    {
+        await _egService.Create(request);
+        isDialogOpen = false;
+
+        // optional: raise an event so parent page can refresh list
+        await OnCreated.InvokeAsync();
+    }
+
+    [Parameter] public EventCallback OnCreated { get; set; }
+}

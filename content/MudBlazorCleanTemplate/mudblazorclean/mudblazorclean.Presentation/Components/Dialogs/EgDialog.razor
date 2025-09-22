@@ -1,0 +1,32 @@
+@if (Opened)
+{
+    <MudDialog>
+        <TitleContent>
+            @Title
+        </TitleContent>
+        <DialogContent>
+            @BodyContent
+        </DialogContent>
+        <DialogActions>
+            @ActionContent
+        </DialogActions>
+    </MudDialog>
+}
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = default!;
+
+    [Parameter] public bool Opened { get; set; }
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public RenderFragment? BodyContent { get; set; }
+    [Parameter] public RenderFragment? ActionContent { get; set; }
+
+    [Parameter] public EventCallback CloseButtonClicked { get; set; }
+
+    private void CloseDialog()
+    {
+        Opened = false;
+        CloseButtonClicked.InvokeAsync();
+    }
+}
