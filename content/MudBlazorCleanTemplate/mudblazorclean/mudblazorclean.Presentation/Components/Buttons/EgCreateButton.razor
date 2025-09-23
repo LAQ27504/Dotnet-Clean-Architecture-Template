@@ -1,11 +1,11 @@
-@using test2.Application.DTOs.Requests
-@using test2.Application.Interfaces.Services
-@using test2.Presentation.Components.Dialogs
+@using mudblazorclean.Application.DTOs.Requests
+@using mudblazorclean.Application.Interfaces.Services
+@using mudblazorclean.Presentation.Components.Dialogs
 
 @inject IEgService _egService
 @inject IDialogService DialogService
 
-<MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="OpenDialog" />
+<MudIconButton Color="Color.Primary" Icon="@Icons.Material.Filled.Create" OnClick="OpenDialog" Size="Size.Medium" />
 
 @code {
     private bool isDialogOpen = false;

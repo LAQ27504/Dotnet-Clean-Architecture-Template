@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using mudblazorclean.Application.Interfaces.Services.Authentication;
 using mudblazorclean.Application.Services.Auth;
 //#endif
+using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 using mudblazorclean.Application.Interfaces.Repositories;
 using mudblazorclean.Application.Interfaces.Services;

@@ -1,0 +1,63 @@
+@using mudblazorclean.Application.DTOs.Requests
+@using mudblazorclean.Application.Interfaces.Services
+@using mudblazorclean.Presentation.Components.Dialogs
+
+@inject IEgService _egService
+@inject IDialogService DialogService
+
+<MudIconButton Color="Color.Primary" Icon="@Icons.Material.Filled.Update" OnClick="OpenDialog" Size="Size.Medium" />
+
+@code {
+    private bool isDialogOpen = false;
+    private EgUpdateRequest editEg = new() { Name = string.Empty };
+    [Parameter] public required Guid EntityId { get; set; }
+    [Parameter] public required EgUpdateRequest EntityToEdit { get; set; }
+
+    private DialogOptions options = new DialogOptions
+    {
+        MaxWidth = MaxWidth.Medium,
+        FullWidth = true
+    };
+
+    private async Task OpenDialog()
+    {
+        if (EntityToEdit != null)
+        {
+            editEg = new EgUpdateRequest
+            {
+                Name = EntityToEdit.Name
+            };
+        }
+
+        isDialogOpen = true;
+
+        var parameters = new DialogParameters<EgUpdateDialog>
+{
+{ x => x.IsOpen, isDialogOpen },
+{ x => x.Request, editEg },
+{ x => x.OnUpdated, EventCallback.Factory.Create<EgUpdateRequest>(this, HandleUpdate) },
+{ x => x.OnClose, EventCallback.Factory.Create(this, HandleClose) }
+};
+
+        // You would typically show the dialog here, e.g.:
+        // DialogService.Show<EgCreateDialog>("Create Eg", parameters);
+        var dialog = await DialogService.ShowAsync<EgUpdateDialog>("Update Eg", parameters, options);
+    }
+
+    private Task HandleClose()
+    {
+        isDialogOpen = false;
+        return Task.CompletedTask;
+    }
+
+    private async Task HandleUpdate(EgUpdateRequest request)
+    {
+        await _egService.Update(EntityId, request); // call Update API
+        isDialogOpen = false;
+
+        // optional: raise event so parent can refresh list
+        await OnUpdated.InvokeAsync();
+    }
+
+    [Parameter] public EventCallback OnUpdated { get; set; }
+}

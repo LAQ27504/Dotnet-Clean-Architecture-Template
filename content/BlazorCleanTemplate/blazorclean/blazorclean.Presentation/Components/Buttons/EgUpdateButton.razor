@@ -18,10 +18,6 @@
 
     private void OpenDialog()
     {
-        Console.WriteLine($"{EntityToEdit.Name}");
-
-        // If you don’t want to mutate the original immediately,
-        // clone the entity into a new request object:
         if (EntityToEdit != null)
         {
             editEg = new EgUpdateRequest

@@ -1,0 +1,35 @@
+@using mudblazorclean.Application.DTOs.Requests
+
+<EgDialog Title="Update Entity" Opened="IsOpen" CloseButtonClicked="Close">
+    <BodyContent>
+        <MudForm>
+            <MudTextField @bind-Value="Request.Name" Label="Name" />
+        </MudForm>
+    </BodyContent>
+    <ActionContent>
+        <MudButton Color="Color.Secondary" OnClick="Close">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Save">Save</MudButton>
+    </ActionContent>
+</EgDialog>
+
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = default!;
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter]
+    public EgUpdateRequest Request { get; set; } = new EgUpdateRequest()
+    {
+        Name = string.Empty
+    };
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback<EgUpdateRequest> OnUpdated { get; set; }
+
+    private void Close() => MudDialog.Cancel();
+
+    private async Task Save()
+    {
+        await OnUpdated.InvokeAsync(Request);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+}

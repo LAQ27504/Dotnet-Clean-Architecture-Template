@@ -1,9 +1,10 @@
 @page "/eg-page"
-@using test2.Application.DTOs.Common
-@using test2.Application.DTOs.Query
-@using test2.Application.DTOs.Responses
-@using test2.Presentation.Components.Buttons
-@using test2.Application.Interfaces.Services
+@using mudblazorclean.Application.DTOs.Common
+@using mudblazorclean.Application.DTOs.Query
+@using mudblazorclean.Application.DTOs.Requests
+@using mudblazorclean.Application.DTOs.Responses
+@using mudblazorclean.Presentation.Components.Buttons
+@using mudblazorclean.Application.Interfaces.Services
 
 @inject IEgService _egService
 
@@ -11,26 +12,44 @@
 
 <MudText Typo="Typo.h3">Eg Entities</MudText>
 
-<EgCreateButton OnCreated="ReloadList" />
 
-<input type="text" @bind="request.Query" placeholder="Search..." class="form-control my-2" @oninput="SearchChanged" />
+<MudStack Row="true" Spacing="10" Class="mb-2" Style="padding: 16px 16px 16px 16px;">
+    <MudTextField @bind-Value="request.Query" Placeholder="Search..." Adornment="Adornment.Start"
+        AdornmentIcon="@Icons.Material.Filled.Search" Immediate="true" TextChanged="LoadData"
+        Variant="Variant.Outlined" />
+    <EgCreateButton OnCreated="ReloadList" />
+</MudStack>
+
 @if (egs.Count > 0)
 {
-    <MudTable Items="@egs" Loading="@_loading" Hover="true">
+    <MudTable Items="@egs" Loading="@_loading" Hover="true" Breakpoint="Breakpoint.Sm">
         <HeaderContent>
             <MudTh>No.</MudTh>
             <MudTh>Message</MudTh>
+            <MudTh>Actions</MudTh>
         </HeaderContent>
         <RowTemplate>
-            @for (int i = 0; i < egs.Count; i++)
-            {
-                <MudTd>@((request.PageIndex - 1) * request.PageSize + i + 1)</MudTd>
-                <MudTd>@egs[i].Message</MudTd>
-            }
+            <MudTd>@(egs.IndexOf(context) + 1)</MudTd>
+            <MudTd>@context.Message</MudTd>
+            <MudTd>
+                <EgUpdateButton EntityId="@context.Id"
+                    EntityToEdit="@(new EgUpdateRequest { Name = context.Name ?? "Not have name" })"
+                    OnUpdated="ReloadList" />
+                <EgDeleteButton Name="@context.Name" EntityId="@context.Id" OnDeleted="ReloadList" />
+            </MudTd>
         </RowTemplate>
-        @* <PagerContent>
-            <MudPagination SelectedChanged="PageChanged" Count="@response.TotalPages" />
-        </PagerContent> *@
+        <PagerContent>
+            <MudStack Row="true" Justify="@Justify.FlexEnd" Spacing="2" Style="gap: 16px;">
+                <MudSelect T="int" @bind-Value="request.PageSize" SelectedValuesChanged="PageSizeChanged" FitContent="true"
+                    Dense="true" Class="ma-4" Immediate="true" Style="min-width: 80px;">
+                    <MudSelectItem Value="5">5</MudSelectItem>
+                    <MudSelectItem Value="10">10</MudSelectItem>
+                    <MudSelectItem Value="20">20</MudSelectItem>
+                </MudSelect>
+                <MudPagination SelectedChanged="PageChanged" ShowFirstButton="true" ShowLastButton="true"
+                    Count="@response.TotalPages" Class="pa-4" />
+            </MudStack>
+        </PagerContent>
     </MudTable>
 }
 else
@@ -86,22 +105,15 @@ else
         await LoadData();
     }
 
-    private async Task SearchChanged(ChangeEventArgs e)
-    {
-        request.Query = e.Value?.ToString();
-        request.PageIndex = 1;
-        await LoadData();
-    }
-
     private async Task ReloadList()
     {
         request.PageIndex = 1;
         await LoadData();
     }
 
-    private async Task PageSizeChanged(ChangeEventArgs e)
+    private async Task PageSizeChanged()
     {
-        request.PageSize = int.Parse(e.Value?.ToString() ?? "10");
+        Console.WriteLine($"Page size changed to: {request.PageSize}");
         request.PageIndex = 1;
         await LoadData();
     }

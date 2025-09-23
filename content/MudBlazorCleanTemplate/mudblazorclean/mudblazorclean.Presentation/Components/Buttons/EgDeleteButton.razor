@@ -1,0 +1,53 @@
+@using mudblazorclean.Application.Interfaces.Services
+@using mudblazorclean.Presentation.Components.Dialogs
+@inject IEgService _egService
+@inject IDialogService DialogService
+
+<MudIconButton Color="Color.Error" Icon="@Icons.Material.Filled.Delete" OnClick="OpenDialog" Size="Size.Medium" />
+
+@code {
+    private bool isDialogOpen = false;
+    [Parameter] public required string Name { get; set; }
+    [Parameter] public required Guid EntityId { get; set; }
+
+    private DialogOptions options = new DialogOptions
+    {
+        MaxWidth = MaxWidth.Medium,
+        FullWidth = true
+    };
+
+    private async Task OpenDialog()
+    {
+        isDialogOpen = true;
+
+        var parameters = new DialogParameters<EgDeleteDialog>
+{
+{ x => x.IsOpen, isDialogOpen },
+{ x => x.EntityName, Name },
+{ x => x.EntityId, EntityId },
+{ x => x.OnDelete, EventCallback.Factory.Create<Guid>(this, HandleDelete) },
+{ x => x.OnClose, EventCallback.Factory.Create(this, HandleClose) }
+};
+
+        // You would typically show the dialog here, e.g.:
+        // DialogService.Show<EgCreateDialog>("Create Eg", parameters);
+        var dialog = await DialogService.ShowAsync<EgDeleteDialog>("EgDeleteDialog Eg", parameters, options);
+    }
+
+    private Task HandleClose()
+    {
+        isDialogOpen = false;
+        return Task.CompletedTask;
+    }
+
+    private async Task HandleDelete(Guid EntityId)
+    {
+        await _egService.Delete(EntityId);
+        isDialogOpen = false;
+
+        // optional: raise an event so parent page can refresh list
+        await OnDeleted.InvokeAsync();
+    }
+
+    [Parameter] public EventCallback OnDeleted { get; set; }
+}

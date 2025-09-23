@@ -1,0 +1,31 @@
+<EgDialog Title="Delete Entity" Opened="IsOpen" CloseButtonClicked="Close">
+    <BodyContent>
+        <MudText Typo="Typo.h6">Are you sure you want to delete the entity '@EntityName'?</MudText>
+    </BodyContent>
+    <ActionContent>
+        <MudButton Color="Color.Secondary" OnClick="Close">Cancel</MudButton>
+        <MudButton Color="Color.Error" OnClick="ConfirmDelete">Delete</MudButton>
+    </ActionContent>
+</EgDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = default!;
+    [Parameter] public bool IsOpen { get; set; }
+
+    [Parameter] public string EntityName { get; set; } = string.Empty;
+
+    [Parameter] public Guid EntityId { get; set; }
+
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    [Parameter] public EventCallback<Guid> OnDelete { get; set; }
+
+    private void Close() => MudDialog.Cancel();
+
+    private async Task ConfirmDelete()
+    {
+        await OnDelete.InvokeAsync(EntityId);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+}

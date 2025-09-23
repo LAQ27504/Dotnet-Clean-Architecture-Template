@@ -31,7 +31,7 @@
     public EgUpdateRequest Request { get; set; } = new EgUpdateRequest()
     {
         Name = string.Empty
-    }; // pre-filled when opening
+    };
     [Parameter] public EventCallback OnClose { get; set; }
     [Parameter] public EventCallback<EgUpdateRequest> OnSave { get; set; }
 
@@ -39,7 +39,6 @@
 
     private async Task Save()
     {
-        // Send back the edited Request to the parent
         await OnSave.InvokeAsync(Request);
     }
 }
