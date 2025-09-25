@@ -1,34 +1,29 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using mudblazorclean.Application.Common;
 using mudblazorclean.Application.DTOs.Requests.Auth;
-using mudblazorclean.Application.DTOs.Responses.Auth;
 using mudblazorclean.Application.Interfaces.Repositories;
 using mudblazorclean.Application.Interfaces.Services.Authentication;
 using mudblazorclean.Application.Interfaces.UnitOfWork;
 using mudblazorclean.Application.Util;
 using mudblazorclean.Domain.Entities;
 
-namespace mudblazorclean.Application.Services
+namespace mudblazorclean.Application.Services.Auth
 {
     public class AuthService : IAuthService
     {
         private readonly IUserRepository _userRepository;
-        private readonly ITokenService _tokenService;
         private readonly IUnitOfWork _unitOfWork;
 
         public AuthService(
             IUserRepository userRepository,
-            ITokenService tokenService,
             IUnitOfWork unitOfWork
         )
         {
             _userRepository = userRepository;
-            _tokenService = tokenService;
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<OperationResult<TokenResponse>> Login(LoginRequest request)
+        public OperationResult<List<Claim>> Login(LoginRequest request)
         {
             var user = _userRepository.GetByUsernameAsync(request.Username).Result;
             if (
@@ -36,14 +31,19 @@ namespace mudblazorclean.Application.Services
                 || !SecurityHelper.VerifyPassword(request.Password, user.HashedPassword)
             )
             {
-                return OperationResult<TokenResponse>.Unauthorized(
+                return OperationResult<List<Claim>>.Unauthorized(
                     "Username or password is incorrect"
                 );
             }
 
-            var tokenResponse = await GenerateTokensForUser(user);
+            var claims = new List<Claim>
+            {
+                new Claim("id", user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Email, user.Email),
+            };
 
-            return OperationResult<TokenResponse>.Ok(tokenResponse);
+            return OperationResult<List<Claim>>.Ok(claims);
         }
 
         public async Task<OperationResult<string>> Registration(RegistrationRequest request)
@@ -78,67 +78,6 @@ namespace mudblazorclean.Application.Services
             await _unitOfWork.SaveChangesAsync();
 
             return OperationResult<string>.Created("User registered successfully");
-        }
-
-        public async Task<OperationResult<TokenResponse>> RefreshingToken(TokenRequest request)
-        {
-            var principal = _tokenService.GetPrincipalFromExpiredToken(request.AccessToken);
-            if (principal == null)
-            {
-                return OperationResult<TokenResponse>.Unauthorized("Invalid access token");
-            }
-
-            var username = principal.Identity?.Name;
-            if (string.IsNullOrEmpty(username))
-            {
-                return OperationResult<TokenResponse>.Unauthorized("Invalid access token");
-            }
-
-            var id = principal.FindFirst("id")?.Value;
-
-            if (id == null || !Guid.TryParse(id, out _))
-            {
-                return OperationResult<TokenResponse>.BadRequest("Invalid access token.");
-            }
-
-            var user = await _userRepository.GetEntityByIdAsync(Guid.Parse(id));
-            if (
-                user == null
-                || user.RefreshToken != request.RefreshToken
-                || user.RefreshTokenExpiryTime <= DateTime.UtcNow
-            )
-            {
-                return OperationResult<TokenResponse>.Unauthorized("Invalid refresh token");
-            }
-
-            var tokenResponse = await GenerateTokensForUser(user);
-
-            return OperationResult<TokenResponse>.Ok(tokenResponse);
-        }
-
-        private async Task<TokenResponse> GenerateTokensForUser(User user)
-        {
-            var claims = new List<Claim>
-            {
-                new Claim("id", user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Email, user.Email),
-            };
-
-            var accessToken = _tokenService.GenerateAccessToken(claims);
-            var refreshToken = _tokenService.GenerateRefreshToken();
-
-            user.RefreshToken = refreshToken;
-            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
-
-            await _unitOfWork.SaveChangesAsync();
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            return new TokenResponse
-            {
-                AccessToken = tokenHandler.WriteToken(accessToken),
-                RefreshToken = refreshToken,
-            };
         }
     }
 }

@@ -1,4 +1,4 @@
-//#if (isAuthen)
+//#if (Authen)
 using Microsoft.AspNetCore.Authentication.Cookies;
 using mudblazorclean.Application.Interfaces.Services.Authentication;
 using mudblazorclean.Application.Services.Auth;
@@ -13,6 +13,7 @@ using mudblazorclean.Infrastructure;
 using mudblazorclean.Infrastructure.Persistence;
 using mudblazorclean.Infrastructure.Repositories;
 using mudblazorclean.Presentation.Components;
+using mudblazorclean.Presentation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,7 +42,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 //#endif
 
 // set up authen
-//#if (isAuthen)
+//#if (Authen)
 // --- 2. Add Authentication & Authorization Services ---
 builder.Services.AddCascadingAuthenticationState();
 
@@ -67,19 +68,19 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 // 2. Repositories
 builder.Services.AddScoped<IEgRepository, EgRepository>();
 
-//#if (isAuthen)
+//#if (Authen)
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 //#endif
 
 // 3. Services
 builder.Services.AddScoped<IEgService, EgService>();
-
-//#if (isAuthen)
+//#if (Authen)
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ITokenService, TokenService>();
-
 //#endif
+
+// 4.Other 
+builder.Services.AddSingleton<CommonParam>();
 
 var app = builder.Build();
 
@@ -96,8 +97,8 @@ app.UseHttpsRedirection();
 
 app.UseAntiforgery();
 
-//#if (isAuthen)
-app.UseAuthorization();
+//#if (Authen)
+app.UseAuthentication();
 app.UseAuthorization();
 //#endif
 

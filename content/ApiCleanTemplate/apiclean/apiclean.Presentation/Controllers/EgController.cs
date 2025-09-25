@@ -12,7 +12,7 @@ namespace apiclean.Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //#if (isAuthen)
+    //#if (Authen)
     [Authorize]
     //#endif
     public class EgController : BaseController
@@ -25,7 +25,7 @@ namespace apiclean.Presentation.Controllers
         }
 
         [HttpPost("create")]
-        //#if (isAuthen)
+        //#if (Authen)
         [Authorize]
         //#endif
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
@@ -38,7 +38,7 @@ namespace apiclean.Presentation.Controllers
         }
 
         [HttpDelete("{id:guid}/delete")]
-        //#if (isAuthen)
+        //#if (Authen)
         [Authorize]
         //#endif
         [ProducesResponseType(typeof(string), StatusCodes.Status204NoContent)]
@@ -51,7 +51,7 @@ namespace apiclean.Presentation.Controllers
         }
 
         [HttpGet("{id:guid}/details")]
-        //#if (isAuthen)
+        //#if (Authen)
         [Authorize]
         //#endif
         [ProducesResponseType(typeof(EgResponse), StatusCodes.Status200OK)]
@@ -64,7 +64,7 @@ namespace apiclean.Presentation.Controllers
         }
 
         [HttpGet("pagination")]
-        //#if (isAuthen)
+        //#if (Authen)
         [Authorize]
         //#endif
         [ProducesResponseType(typeof(PaginationResponse<EgResponse>), StatusCodes.Status200OK)]
@@ -75,7 +75,7 @@ namespace apiclean.Presentation.Controllers
         }
 
         [HttpPut("{Id:guid}/update")]
-        //#if (isAuthen)
+        //#if (Authen)
         [Authorize]
         //#endif
         [ProducesResponseType(typeof(string), StatusCodes.Status202Accepted)]

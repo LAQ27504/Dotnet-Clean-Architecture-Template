@@ -1,6 +1,7 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 
 @inject CommonParam _commonParam
+@inject NavigationManager _navManager
 
 <MudThemeProvider Theme="@_theme" IsDarkMode="@_commonParam.IsDarkMode" />
 <MudPopoverProvider />
@@ -14,6 +15,20 @@
         <MudSpacer />
         <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="@DarkModeToggle" />
         <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+        <AuthorizeView>
+            <Authorized>
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Small"
+                    OnClick="@(() => _navManager.NavigateTo("/auth/logout", forceLoad:true))" Class="ms-2">
+                    Logout
+                </MudButton>
+            </Authorized>
+            <NotAuthorized>
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Small"
+                    OnClick="@(() => _navManager.NavigateTo("/auth/login", forceLoad:true))" Class="ms-2">
+                    Login
+                </MudButton>
+            </NotAuthorized>
+        </AuthorizeView>
     </MudAppBar>
     <MudDrawer id="nav-drawer" @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
         <NavMenu />

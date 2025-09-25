@@ -1,4 +1,4 @@
-//#if (isAuthen)
+//#if (Authen)
 using System.Security.Claims;
 using apiclean.Application.Services.Auth;
 using System.Text;
@@ -38,7 +38,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 );
 //#endif
 
-//#if (isAuthen)
+//#if (Authen)
 //Authentication
 var configuration = builder.Configuration;
 
@@ -68,7 +68,7 @@ builder.Services.AddSwaggerGen(c =>
     c.AddSecurityDefinition(
         "Bearer",
         new OpenApiSecurityScheme
-        { 
+        {
             Name = "Authorization",
             Type = SecuritySchemeType.ApiKey,
             Scheme = "Bearer",
@@ -105,7 +105,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 // 2. Repositories
 builder.Services.AddScoped<IEgRepository, EgRepository>();
 
-//#if (isAuthen)
+//#if (Authen)
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 //#endif
@@ -113,7 +113,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 // 3. Services
 builder.Services.AddScoped<IEgService, EgService>();
 
-//#if (isAuthen)
+//#if (Authen)
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
@@ -136,7 +136,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
-//#if (isAuthen)
+//#if (Authen)
 app.UseAuthorization();
 app.UseAuthorization();
 //#endif

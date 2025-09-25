@@ -9,8 +9,5 @@ namespace mudblazorclean.Domain.Entities
         public string Email { get; set; } = string.Empty;
 
         public string HashedPassword { get; set; } = string.Empty;
-
-        public string? RefreshToken { get; set; }
-        public DateTime? RefreshTokenExpiryTime { get; set; }
     }
 }

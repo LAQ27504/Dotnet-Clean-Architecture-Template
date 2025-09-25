@@ -32,7 +32,7 @@
       "replaces": "SQLite",
       "defaultValue": "SQLite"
     },
-    "isAuthen": {
+    "Authen": {
       "type": "parameter",
       "datatype": "bool",
       "description": "Include authentication and User entity",
@@ -43,8 +43,23 @@
     {
       "modifiers": [
         {
-          "condition": "(!isAuthen)",
-          "exclude": ["**/User.cs", "**/Auth/**", "**/*user*.*", "**/*User*.*"]
+          "condition": "(!Authen)",
+          "exclude": [
+            "**/User.cs",
+            "**/Auth/**",
+            "**/*user*.*",
+            "**/*User*.*",
+            "**/MainLayout.Authen.razor",
+            "**/NavMenu.Authen.razor"
+          ]
+        },
+        {
+          "condition": "(Authen)",
+          "exclude": ["**/MainLayout.razor"],
+          "rename": {
+            "MainLayout.Authen.razor": "MainLayout.razor",
+            "NavMenu.Authen.razor": "NavMenu.razor"
+          }
         },
         {
           "condition": "(db == \"SQLite\")",

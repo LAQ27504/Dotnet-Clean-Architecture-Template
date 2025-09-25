@@ -6,6 +6,7 @@
     <RootNamespace>mudblazorclean.Presentation</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Extensions.MudBlazor.StaticInput" Version="3.*" />
     <PackageReference Include="FluentValidation" Version="12.0.0" />
     <PackageReference Include="MudBlazor" Version="8.*" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
@@ -14,9 +15,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup Condition="'$(isAuthen)' == true">
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.8" />
-  </ItemGroup>
+  <ItemGroup Condition="'$(Authen)' == true"></ItemGroup>
   <ItemGroup Condition="'$(db)' == 'SQLServer'">
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.8" />
   </ItemGroup>

@@ -32,7 +32,7 @@
       "replaces": "SQLite",
       "defaultValue": "SQLite"
     },
-    "isAuthen": {
+    "Authen": {
       "type": "parameter",
       "datatype": "bool",
       "description": "Include authentication and User entity",
@@ -43,7 +43,7 @@
     {
       "modifiers": [
         {
-          "condition": "(!isAuthen)",
+          "condition": "(!Authen)",
           "exclude": [
             "**/AuthController.cs",
             "**/User.cs",

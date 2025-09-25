@@ -1,0 +1,22 @@
+@inherits LayoutComponentBase
+
+@inject CommonParam _commonParam
+
+<MudThemeProvider @bind-IsDarkMode="@_commonParam.IsDarkMode" Theme="@_theme" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private MudTheme _theme = new MudTheme();
+
+    protected override void OnInitialized()
+    {
+        // Initialize any additional parameters or services if needed
+    }
+}

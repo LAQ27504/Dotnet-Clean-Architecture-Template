@@ -1,4 +1,4 @@
-//#if (isAuthen)
+//#if (Authen)
 using blazorclean.Application.Services.Auth;
 using blazorclean.Application.Interfaces.Services.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -37,7 +37,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 //#endif
 
 // set up authen
-//#if (isAuthen)
+//#if (Authen)
 // --- 2. Add Authentication & Authorization Services ---
 builder.Services.AddCascadingAuthenticationState();
 
@@ -63,7 +63,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 // 2. Repositories
 builder.Services.AddScoped<IEgRepository, EgRepository>();
 
-//#if (isAuthen)
+//#if (Authen)
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 //#endif
@@ -71,7 +71,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 // 3. Services
 builder.Services.AddScoped<IEgService, EgService>();
 
-//#if (isAuthen)
+//#if (Authen)
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
@@ -92,7 +92,7 @@ app.UseHttpsRedirection();
 
 app.UseAntiforgery();
 
-//#if (isAuthen)
+//#if (Authen)
 app.UseAuthorization();
 app.UseAuthorization();
 //#endif

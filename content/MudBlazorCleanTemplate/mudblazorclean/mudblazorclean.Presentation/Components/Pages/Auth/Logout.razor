@@ -1,0 +1,54 @@
+@page "/auth/logout"
+@using Microsoft.AspNetCore.Authentication
+@inject NavigationManager NavManager
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-16">
+    <MudCard Elevation="25">
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h5" Align="Align.Center">Logout Successful</MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+
+        <MudCardContent>
+            <div class="d-flex justify-center mb-4">
+                <MudIcon Icon="@Icons.Material.Filled.Logout" Color="Color.Primary" Size="Size.Large"
+                    Style="font-size: 100px;" />
+            </div>
+
+            <MudText Typo="Typo.h6" Align="Align.Center" GutterBottom="true">
+                You've successfully logged out of the application.
+            </MudText>
+            <MudText Align="Align.Center">
+                Thank you for using our service. Click below to return to the homepage or log in again.
+            </MudText>
+        </MudCardContent>
+
+        <MudCardActions Class="d-flex justify-center pa-4">
+            <MudButton OnClick="GoToLogin" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large">
+                Go back to Login
+            </MudButton>
+        </MudCardActions>
+    </MudCard>
+</MudContainer>
+
+@code {
+    [CascadingParameter]
+    public HttpContext HttpContext { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (HttpContext?.User?.Identity?.IsAuthenticated == true)
+        {
+            await HttpContext.SignOutAsync();
+            NavManager.NavigateTo("/auth/logout", true);
+        }
+    }
+
+    private void GoToLogin()
+    {
+        NavManager.NavigateTo("/auth/login", forceLoad: true);
+    }
+}
