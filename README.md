@@ -54,7 +54,7 @@ dotnet restore
 
 ### 5. Configure the Database Connection
 
-Open `appsettings.json` or `appsettings.Development.json` in the WebUI project and update the `DefaultConnection` string:
+Open `appsettings.json` or `appsettings.Development.json` in the MyProject.Presentation project and update the `DefaultConnection` string:
 
 ```json
 "ConnectionStrings": {
@@ -76,7 +76,7 @@ dotnet ef migrations add InitialCreate --project MyProject.Infrastructure --star
 ### 7. Apply the Migration to the Database
 
 ```bash
-dotnet ef database update -p Infrastructure -s WebUI
+dotnet ef database update -p --project MyProject.Infrastructure --startup-project MyProject.Presentation
 ```
 
 ### 8. Build and Run the Application
@@ -87,10 +87,10 @@ Build the solution:
 dotnet build
 ```
 
-Run the WebUI project:
+Run the MyProject.Presentation project:
 
 ```bash
-dotnet run --project WebUI
+dotnet run --project MyProject.Presentation
 ```
 
 Your application should now be running at `https://localhost:5001` or `http://localhost:5000`.
@@ -102,16 +102,16 @@ After creation you will have:
 ```
 MyProject/
 │
-├── Domain/           # Core business logic
-├── Application/      # Use cases & services
-├── Infrastructure/   # EF Core, database, external services
-└── WebUI/            # Blazor/MudBlazor front-end
+├── MyProject.Domain/           # Core business logic
+├── MyProject.Application/      # Use cases & services
+├── MyProject.Infrastructure/   # EF Core, database, external services
+└── MyProject.Presentation/            # Blazor/MudBlazor front-end/Controller
 ```
 
-- Add new entities in **Domain**
-- Add business logic in **Application**
-- Implement data access in **Infrastructure**
-- Add pages/components in **WebUI**
+- Add new entities in **MyProject.Domain**
+- Add business logic in **MyProject.Application**
+- Implement data access in **MyProject.Infrastructure**
+- Add pages/components or controllers in **MyProject.Presentation**
 
 ### 10. Next Steps
 
