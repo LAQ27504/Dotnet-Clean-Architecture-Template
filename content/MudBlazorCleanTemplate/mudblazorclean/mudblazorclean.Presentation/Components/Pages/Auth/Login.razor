@@ -14,39 +14,40 @@
 <EditForm Model="@request" OnValidSubmit="Authenticate" FormName="login" method="post">
     <MudGrid Justify="Justify.Center" Class="mt-12">
         <MudItem xs="12" sm="8" md="4">
-            <MudPaper Class="pa-4" Elevation="3">
-                <MudGrid Spacing="3">
-                    <MudItem xs="12">
-                        <MudText Typo="Typo.h5">Login</MudText>
-                    </MudItem>
-                    <MudItem xs="12">
-                        <MudText>Welcome back</MudText>
-                        @if (!string.IsNullOrEmpty(errorMessage))
-                        {
-                            <MudAlert Severity="Severity.Error" Class="mb-3">@errorMessage</MudAlert>
-                        }
-                    </MudItem>
-                    <MudItem xs="12">
-                        <MudStaticTextField @bind-value="@request.Username" Label="User"
-                            Placeholder="user@example.com/user" />
-                    </MudItem>
-                    <MudItem xs="12">
-                        <MudStaticTextField @bind-value="@request.Password" Label="Password" Placeholder="password123"
-                            InputType="InputType.Password" />
-                    </MudItem>
-                    <MudItem xs="12">
-                        <MudStaticButton Variant="Variant.Filled" Color="Color.Primary" FormAction="FormAction.Submit">
-                            Login</MudStaticButton>
-                    </MudItem>
-                </MudGrid>
-            </MudPaper>
+            <MudGrid Spacing="3">
+                <MudItem xs="12" Class="d-flex justify-center">
+                    <MudText Typo="Typo.h4">Login</MudText>
+                </MudItem>
+                <MudItem xs="12" Class="d-flex justify-center">
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <MudAlert Severity="Severity.Error" Class="mb-3">@errorMessage</MudAlert>
+                    }
+                </MudItem>
+                <MudItem xs="12">
+                    <MudStaticTextField @bind-value="@request.Username" Label="User Name" Variant="Variant.Outlined"
+                        Placeholder="user" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudStaticTextField @bind-value="@request.Password" Label="Password" Variant="Variant.Outlined"
+                        Placeholder="password123" InputType="InputType.Password" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudStaticButton Variant="Variant.Filled" Color="Color.Primary" FormAction="FormAction.Submit"
+                        FullWidth="true">
+                        Login</MudStaticButton>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudLink Href="/auth/registration">Don't have account ? Create one</MudLink>
+                </MudItem>
+            </MudGrid>
         </MudItem>
     </MudGrid>
 </EditForm>
 
 @code {
     [CascadingParameter]
-    public HttpContext httpContext { get; set; } = default!;
+    public required HttpContext httpContext { get; set; } = default!;
 
     [SupplyParameterFromForm(FormName = "login")]
     public LoginRequest request { get; set; } = new()
@@ -55,22 +56,21 @@
         Password = string.Empty
     };
 
-    MudForm form;
-
     public string? errorMessage;
+
+    protected override Task OnInitializedAsync()
+    {
+        errorMessage = string.Empty;
+        return Task.CompletedTask;
+    }
 
     private async Task Authenticate()
     {
-        Console.WriteLine("Authenticate");
-        // This logic remains the same, but it's now more robust
-        // because of the DataAnnotationsValidator in the form.
-        Console.WriteLine($"{request.Username} and {request.Password}");
         var response = _authenservice.Login(request);
 
         if (!response.Success)
         {
             errorMessage = response.Message;
-            Console.WriteLine("Authenticate Fail");
             return;
         }
         var claims = response.Data;

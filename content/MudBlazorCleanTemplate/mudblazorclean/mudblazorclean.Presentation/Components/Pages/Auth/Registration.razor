@@ -8,6 +8,49 @@
 @inject IAuthService _authenservice;
 @inject NavigationManager _navManager;
 
+<EditForm Model="@request" OnValidSubmit="Register" FormName="regis" method="post">
+    <DataAnnotationsValidator />
+    <MudGrid Justify="Justify.Center" Class="mt-12">
+        <MudItem xs="12" sm="8" md="4">
+            <MudGrid Spacing="3">
+                <MudItem xs="12" Class="d-flex justify-center">
+                    <MudText Typo="Typo.h4">Registration</MudText>
+                </MudItem>
+                <MudItem xs="12" Class="d-flex justify-center">
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <MudAlert Severity="Severity.Error" Class="mb-3">@errorMessage</MudAlert>
+                    }
+                </MudItem>
+                <MudItem xs="12">
+                    <MudStaticTextField @bind-value="@request.UserName" Label="User" Variant="Variant.Outlined"
+                        Placeholder="User" For="@(() => request.UserName)" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudStaticTextField @bind-value="@request.Email" Label="Email" Variant="Variant.Outlined"
+                        Placeholder="User@example.com" For="@(() => request.Email)" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudStaticTextField @bind-value="@request.Password" Label="Password" Variant="Variant.Outlined"
+                        Placeholder="Password123" InputType="InputType.Password" For="@(() => request.Password)" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudStaticTextField @bind-value="@request.ConfirmPassword" Label="Confirm Password"
+                        Variant="Variant.Outlined" Placeholder="Password123" InputType="InputType.Password"
+                        For="@(() => request.ConfirmPassword)" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudStaticButton Variant="Variant.Filled" Color="Color.Primary" FormAction="FormAction.Submit"
+                        FullWidth="true">
+                        Register</MudStaticButton>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudLink Href="/auth/login">Already have one? Login</MudLink>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+    </MudGrid>
+</EditForm>
 
 @code {
     private RegistrationRequest request { get; set; } = new()
@@ -20,17 +63,21 @@
 
     public string? errorMessage;
 
+    protected override Task OnInitializedAsync()
+    {
+        errorMessage = string.Empty;
+        return Task.CompletedTask;
+    }
+
     private async Task Register()
     {
+        Console.WriteLine("heheh");
         var response = await _authenservice.Registration(request);
         if (response.Success)
         {
-            // Handle successful registration, e.g., redirect to login page or show success message
             _navManager.NavigateTo("/auth/login", forceLoad: true);
+            return;
         }
-        else
-        {
-            errorMessage = response.Message;
-        }
+        errorMessage = response.Message;
     }
 }

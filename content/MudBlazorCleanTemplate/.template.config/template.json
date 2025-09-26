@@ -49,16 +49,21 @@
             "**/Auth/**",
             "**/*user*.*",
             "**/*User*.*",
-            "**/MainLayout.Authen.razor",
-            "**/NavMenu.Authen.razor"
+            "**/*.Authen.*"
           ]
         },
         {
           "condition": "(Authen)",
-          "exclude": ["**/MainLayout.razor"],
+          "exclude": [
+            "**/MainLayout.razor",
+            "**/NavMenu.razor",
+            "**/EgPage.razor"
+          ],
           "rename": {
             "MainLayout.Authen.razor": "MainLayout.razor",
-            "NavMenu.Authen.razor": "NavMenu.razor"
+            "NavMenu.Authen.razor": "NavMenu.razor",
+            "EgPage.Authen.razor": "EgPage.razor",
+            "*.Authen.cs": "*.cs"
           }
         },
         {

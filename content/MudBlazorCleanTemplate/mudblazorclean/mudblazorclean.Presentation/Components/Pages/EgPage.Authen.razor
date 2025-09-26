@@ -1,4 +1,5 @@
 @page "/eg-page"
+@using Microsoft.AspNetCore.Authorization
 @using mudblazorclean.Application.DTOs.Common
 @using mudblazorclean.Application.DTOs.Query
 @using mudblazorclean.Application.DTOs.Requests
@@ -7,13 +8,13 @@
 @using mudblazorclean.Application.Interfaces.Services
 
 @inject IEgService _egService
+@attribute [Authorize]
 
 <PageTitle>Example</PageTitle>
 
 <MudText Typo="Typo.h3" Style="padding: 16px 16px 0px 16px;">Eg Entities</MudText>
 
-
-<MudStack Row="true" Spacing="10" Class="mb-2" Style="padding: 16px 16px 16px 16px;">
+<MudStack Row="true" Spacing="10" Class="mb-2" Style="padding: 16px 16px 0px 16px;">
     <MudTextField @bind-Value="request.Query" Placeholder="Search..." Adornment="Adornment.Start"
         AdornmentIcon="@Icons.Material.Filled.Search" Immediate="true" TextChanged="LoadData"
         Variant="Variant.Outlined" />
@@ -53,8 +54,9 @@
 }
 else
 {
-    <MudText Style="padding: 16px 16px 0px 16px;">No items found.</MudText>
+    <MudText Style="padding: 16px 16px 16px 16px;">No items found.</MudText>
 }
+
 
 @code {
     private bool _loading = false;
